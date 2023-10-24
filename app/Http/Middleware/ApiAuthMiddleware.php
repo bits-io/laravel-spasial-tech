@@ -35,7 +35,8 @@ class ApiAuthMiddleware
             $jwtHeader = json_decode($tokenHeader);
             $jwtPayload = json_decode($tokenPayload);
 
-            $user = User::where('id', $jwtPayload->sub)->first();
+            $user = User::where('id', $jwtPayload->sub)
+                ->where('remember_token', $token)->first();
             if (!$user) {
                 $authenticate = false;
             } else {

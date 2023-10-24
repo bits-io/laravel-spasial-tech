@@ -42,7 +42,8 @@ class AuthController extends Controller
             // $token = $this->createNewToken(auth()->attempt($user));
             $token = JWTAuth::fromUser($user);
 
-            Auth::login($user);
+            $user->remember_token = $token;
+            $user->save();
 
             // RESPONSE
             return ResponseHelper::success(
