@@ -9,8 +9,12 @@ How to run/install?
    - `php artisan jwt:secret`
    - `php artisan storage:link`
    - `php artisan migrate --seed`
-3. Open [http://localhost:8000/login](http://localhost:8000/login) or [http://127.0.0.1:8000/login](http://127.0.0.1:8000/login) in your preferred browser.
-4. Start coding! 👨‍💻☕
+3. User Role:
+   - 1 Admin
+   - 2 Manager
+   - 3 User
+4. Open [http://localhost:8000/login](http://localhost:8000/login) or [http://127.0.0.1:8000/login](http://127.0.0.1:8000/login) in your preferred browser.
+5. Start coding! 👨‍💻☕
 
 
 
