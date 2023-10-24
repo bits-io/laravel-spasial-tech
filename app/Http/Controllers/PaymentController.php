@@ -61,7 +61,8 @@ class PaymentController extends Controller
     public function index()
     {
         try {
-            return ResponseHelper::success();
+            $payments = Payment::all();
+            return ResponseHelper::success($payments, 'Show all payment');
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage(), 500);
         }
