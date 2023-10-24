@@ -17,15 +17,57 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return ResponseHelper::success(
-            [
-                'users' => User::all(),
-            ],
-            'Show all user',
-            200
-        );
+        try {
+            $firstName = $request->first_name;
+            $lastName = $request->last_name;
+            $address = $request->address;
+            $gender = $request->gender;
+            $role = $request->role;
+
+            $perPage = $request->per_page;
+
+            $query = User::query();
+
+
+            $query->when($firstName ?? false, fn($query, $firstName) =>
+                $query->whereHas('user_detail', fn($query) =>
+                    $query->where('first_name', $firstName)
+                )
+            );
+
+            $query->when($lastName ?? false, fn($query, $lastName) =>
+                $query->whereHas('user_detail', fn($query) =>
+                    $query->where('last_name', $lastName)
+                )
+            );
+
+            $query->when($address ?? false, fn($query, $address) =>
+                $query->whereHas('user_detail', fn($query) =>
+                    $query->where('address', $address)
+                )
+            );
+
+            $query->when($gender ?? false, fn($query, $gender) =>
+                $query->whereHas('user_detail', fn($query) =>
+                    $query->where('gender', $gender)
+                )
+            );
+
+            $query->when($role ?? false, fn($query, $role) =>
+                $query->whereHas('role', fn($query) =>
+                    $query->where('name', $role)
+                )
+            );
+
+            $users = $query->paginate($perPage);
+
+
+            return ResponseHelper::success($users,'Show all user');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
     }
 
     /**
