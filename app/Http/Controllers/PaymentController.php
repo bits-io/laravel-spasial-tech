@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Models\Credit;
+use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,18 +14,15 @@ class PaymentController extends Controller
 {
     public function store(Request $request)
     {
+        // Check user
+        if (Auth::user()->role_id != 1) {
+            return ResponseHelper::error('Unauthorized', 401);
+        }
+
         // Validate request data
         $validator = Validator::make($request->all(), [
-            'email' => 'required|unique:users|email:dns|max:200',
-            'password' => 'required|min:6|max:200',
-            'phone_number' => 'nullable|max:20',
-
-            'first_name' => 'required|max:200',
-            'last_name' => 'nullable|max:200',
-            'address' => 'nullable|max:255',
-            'gender' => 'required|max:20',
-            'date_of_birth' => 'required|date',
-            'img_ktp' => 'nullable|file|max:2048'
+            'credit_id' => 'required',
+            'amount' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -35,12 +35,34 @@ class PaymentController extends Controller
 
         DB::beginTransaction();
         try {
+            $creditId = $request->credit_id;
+            $amount = $request->amount;
+
+            $credit = Credit::find($creditId);
+            if (!$credit) {
+                return ResponseHelper::error('Credit not found', 404);
+            }
+
+            $payment = new Payment();
+            $payment->credit_id = $creditId;
+            $payment->amount = $amount;
+            $payment->status = 'PENDING';
+            $payment->save();
 
 
             DB::commit();
-            return ResponseHelper::success();
+            return ResponseHelper::success($payment, 'Payment credit created');
         } catch (\Throwable $th) {
             DB::rollBack();
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
+    }
+
+    public function index()
+    {
+        try {
+            return ResponseHelper::success();
+        } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage(), 500);
         }
     }

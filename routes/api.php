@@ -35,7 +35,9 @@ Route::group(['middleware' => ['auth2']], function(){
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
     Route::get('/credits', [CreditController::class, 'index']);
+    Route::get('/credits/{id}', [CreditController::class, 'show']);
     Route::get('/payments', [PaymentController::class, 'index']);
+    Route::get('/payments/{id}', [PaymentController::class, 'show']);
 
     // ROLE USER
     Route::post('/credits', [CreditController::class, 'store']);
