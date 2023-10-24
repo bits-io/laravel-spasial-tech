@@ -84,8 +84,33 @@ class CreditController extends Controller
         }
     }
 
-    public function update()
+    public function update(Request $request, $id)
     {
+        // Check user
+        if (Auth::user()->role_id != 2) {
+            return ResponseHelper::error('Unauthorized', 401);
+        }
 
+        // Validate request data
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:WAITING,PROCESSED,ONGOING,DONE',
+        ]);
+
+        if ($validator->fails()) {
+            return ResponseHelper::error(
+                'Validation error',
+                400,
+                $validator->errors()
+            );
+        }
+        try {
+            $credit = Credit::find($id);
+            $credit->status = $request->status;
+            $credit->save();
+
+            return ResponseHelper::success($credit, 'credit updated');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
     }
 }
