@@ -15,7 +15,7 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         // Check user
-        if (Auth::user()->role_id != 1) {
+        if (Auth::user()->role_id != 3) {
             return ResponseHelper::error('Unauthorized', 401);
         }
 
@@ -68,13 +68,58 @@ class PaymentController extends Controller
         }
     }
 
-    public function show()
+    public function show($id)
     {
+        try {
+            $payment = Payment::find($id);
+            if (!$payment) {
+                return ResponseHelper::error('Credit not found', 404);
+            }
 
+            return ResponseHelper::success($payment, 'Show detail payment');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
     }
 
-    public function update()
+    public function update(Request $request, $id)
     {
+        // Check user
+        if (Auth::user()->role_id != 1) {
+            return ResponseHelper::error('Unauthorized', 401);
+        }
 
+        // Validate request data
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:PENDING,FAILED,PAID,REFUNDED',
+        ]);
+
+        if ($validator->fails()) {
+            return ResponseHelper::error(
+                'Validation error',
+                400,
+                $validator->errors()
+            );
+        }
+
+        DB::beginTransaction();
+        try {
+            $status = $request->status;
+
+            $payment = Payment::find($id);
+            if (!$payment) {
+                return ResponseHelper::error('Credit not found', 404);
+            }
+
+            $payment->status = $status;
+            $payment->save();
+
+
+            DB::commit();
+            return ResponseHelper::success($payment, 'Payment credit created');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
     }
 }

@@ -47,6 +47,6 @@ Route::group(['middleware' => ['auth2']], function(){
     Route::post('/credits/{id}', [CreditController::class, 'update']);
 
     // ROLE ADMIN
-    Route::post('/payment/{id}', [PaymentController::class, 'update']);
+    Route::post('/payments/{id}', [PaymentController::class, 'update']);
 
 });
