@@ -13,6 +13,11 @@ class CreditController extends Controller
 {
     public function store(Request $request)
     {
+        // Check user
+        if (Auth::user()->role_id != 3) {
+            return ResponseHelper::error('Unauthorized', 401);
+        }
+
         // Validate request data
         $validator = Validator::make($request->all(), [
             'credit_type' => 'required|max:200',
@@ -32,10 +37,7 @@ class CreditController extends Controller
 
         DB::beginTransaction();
         try {
-            // Check user
-            if (Auth::user()->role_id != 3) {
-                return ResponseHelper::error('Unauthorized', 401);
-            }
+
 
             $userId = Auth::user()->id;
             $creditType = $request->credit_type;
