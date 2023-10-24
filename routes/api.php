@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CreditController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +18,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::group(['middleware' => ['auth2']], function(){
+
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::post('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+    Route::get('/credits', [CreditController::class, 'index']);
+    Route::get('/payments', [PaymentController::class, 'index']);
+
+    // ROLE USER
+    Route::post('/credits', [CreditController::class, 'store']);
+    Route::post('/payments', [PaymentController::class, 'store']);
+
+    // ROLE MANAGER
+    Route::post('/credits/{id}', [CreditController::class, 'update']);
+
+    // ROLE ADMIN
+    Route::post('/payment/{id}', [PaymentController::class, 'update']);
+
 });
