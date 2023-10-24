@@ -64,9 +64,24 @@ class CreditController extends Controller
         }
     }
 
-    public function show()
+    public function index()
     {
+        try {
+            $credits = Credit::all();
+            return ResponseHelper::success($credits, 'Show all credit');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
+    }
 
+    public function show($id)
+    {
+        try {
+            $credit = Credit::find($id);
+            return ResponseHelper::success($credit, 'Show detail credit');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage(), 500);
+        }
     }
 
     public function update()
