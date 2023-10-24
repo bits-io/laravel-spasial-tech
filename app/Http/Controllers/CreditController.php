@@ -80,6 +80,9 @@ class CreditController extends Controller
     {
         try {
             $credit = Credit::find($id);
+            if (!$credit) {
+                return ResponseHelper::error('Credit not found', 404);
+            }
             return ResponseHelper::success($credit, 'Show detail credit');
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage(), 500);
@@ -107,6 +110,10 @@ class CreditController extends Controller
         }
         try {
             $credit = Credit::find($id);
+            if (!$credit) {
+                return ResponseHelper::error('Credit not found', 404);
+            }
+
             $credit->status = $request->status;
             $credit->save();
 
