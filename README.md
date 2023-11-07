@@ -1,4 +1,4 @@
-# siakuin
+# spasial tech
 How to run/install?
 1. First of all, make sure **PHP** and **Composer** is installed (WAMP stack program is better, like **XAMPP** or **Laragon**).
 2. Type this command:

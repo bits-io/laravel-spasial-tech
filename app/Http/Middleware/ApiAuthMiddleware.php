@@ -17,7 +17,7 @@ class ApiAuthMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $token = $request->header('Authorization');
         $authenticate = true;
@@ -34,6 +34,8 @@ class ApiAuthMiddleware
             $tokenPayload = base64_decode($tokenParts[1]);
             $jwtHeader = json_decode($tokenHeader);
             $jwtPayload = json_decode($tokenPayload);
+
+            // return response()->json($roles[0]);
 
             $user = User::where('id', $jwtPayload->sub)
                 ->where('remember_token', $token)->first();

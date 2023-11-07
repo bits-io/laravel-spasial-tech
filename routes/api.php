@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::group(['middleware' => ['auth2']], function(){
+Route::group(['middleware' => ['auth2:1']], function(){
 
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
